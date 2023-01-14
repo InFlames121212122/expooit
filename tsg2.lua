@@ -14,8 +14,6 @@ local AnimalsFolder = Workspace.animals
 local DroppedItemsFolder = Workspace.droppedItems 
 
 local KillAura = false
-local MineAura = false
-local HuntAura = false
 local AutoPickup = false
 local Speed = false
 
@@ -385,8 +383,9 @@ local IronButton
 local CoalButton
 local CopperButton
 local BluesteelButton
+local StoneButton
 
-HarvestToggle = FarmingFrame:CreateToggle("Harvest not working", "Sets the farming mode to Harvest", function(Bool)
+HarvestToggle = FarmingFrame:CreateToggle("Harvest", "Sets the farming mode to Harvest", function(Bool)
     AutoPickup = Bool
 
     Plant:SetToggle(false)
@@ -396,18 +395,6 @@ PlantToggle = FarmingFrame:CreateToggle("Plant not working", "Sets the farming m
     AutoPickup = Bool
 
     HarvestToggle:SetToggle(true)
-end)
-
-CombatFrame:CreateToggle("Kill Aura not working", "Hits the closest person to you inside of a 5 stud radius.", function(Bool)
-    KillAura = Bool
-end)
-
-CombatFrame:CreateToggle("Hunt Auranot working", "Hits the closest animal to you inside of a 10 stud radius.", function(Bool)
-    HuntAura = Bool
-end)
-
-CombatFrame:CreateToggle("Mine Auranot working", "Mines the closest ore to you inside of a 10 stud radius.", function(Bool)
-    MineAura = Bool
 end)
 
 PlayerFrame:CreateToggle("Speed", "Makes you walk faster than normal?", function(Bool)
@@ -442,11 +429,13 @@ TeleportsFrame:CreateButton("Boulder", "Telepors you to a Boulder.", function()
     BoatTeleport(GetOre("Boulder").Boulder.Position)
 end)
 
-TeleportsFrame:CreateButton("Bluesteel", "Telepors you to a Bluesteel.", function()
+BluesteelButton = TeleportsFrame:CreateButton("Bluesteel", "Telepors you to a Bluesteel.", function()
     BoatTeleport(GetOre("Bluesteel").PrimaryPart.Position)
+    print(Bluesteel)
 end)
-TeleportsFrame:CreateButton("stone", "Telepors you to a stone.", function()
+StoneButton = TeleportsFrame:CreateButton("stone", "Telepors you to a stone.", function()
     BoatTeleport(GetOre("Stone").PrimaryPart.Position)
+    print(stone)
 end)
 
 
@@ -501,36 +490,6 @@ TeleportsFrame:CreateBox("Choppable", 10044538000, function(Text)
     end
 end)
 
-local SteelArmorButton
-
-SteelArmorButton = MiscFrame:CreateButton("Get Players with Steal Armor not working", "N/A", function()
-    local PlayersWithSteelArmor = {}
-
-    for i, v in pairs(Players:GetPlayers()) do
-        if v ~= LocalPlayer and HasSteelArmor(v) then
-            table.insert(PlayersWithSteelArmor, v.Name)
-        end
-    end
-
-    if #PlayersWithSteelArmor > 0 then
-        print(table.unpack(PlayersWithSteelArmor))
-    else
-        print("none")
-    end
-end)
-
-MiscFrame:CreateBox("Has Steel Armor (Player) not working", 10044538000, function(Text)
-    if (Text ~= nil and Text ~= "") and string.len(Text) > 1 then
-        local Player = GetPlayer(Text) or GetPlayerByDisplayName(Text)
-
-        if Player and Player.Character ~= nil then
-            CreateNotification("Player Notification", Player.Name .. " has steel armor.", function(value)
-                print(value)
-            end)
-        end
-    end
-end)
-
 MiscFrame:CreateButton("InFlames#6964", "Discord: InFlames#6964", function()
     setclipboard("https://discord.gg/UMqukShA67")
 end)
@@ -539,30 +498,9 @@ RunService.Heartbeat:Connect(function(DeltaTime)
     IronButton:UpdateButton("Iron Ore", "Telepors you to an Iron Ore.  |  " .. GetAmountOfOre("Iron Ore") .. " left.")
     CoalButton:UpdateButton("Coal Ore", "Telepors you to a Coal Ore.  |  " .. GetAmountOfOre("Coal Ore") .. " left.")
     CopperButton:UpdateButton("Copper Ore", "Telepors you to a Copper Ore.  |  " .. GetAmountOfOre("Copper Ore") .. " left.")
+    StoneButton:UpdateButton("Stone", "Telepors you to a Stone Ore.  |  " .. GetAmountOfOre("Stone") .. " left.")
+    BluesteelButton:UpdateButton("Bluesteel", "Telepors you to a Stone Ore.  |  " .. GetAmountOfOre("Bluesteel") .. " left.")
     
-
-    if KillAura then
-        if LocalPlayer.Character ~= nil and LocalPlayer.Character:FindFirstChild("HumanoidRootPart") then
-            local Player = GetClosestPlayer()
-
-            if Player and Player.Character ~= nil and Player.Character:FindFirstChild("HumanoidRootPart") then
-                if GetMagnitude(LocalPlayer.Character.HumanoidRootPart.Position, Player.Character.HumanoidRootPart.Position) < 10 then
-                    HitPlayer(Player)
-                end
-            end
-        end
-    end
-    if HuntAura then
-        if LocalPlayer.Character ~= nil and LocalPlayer.Character:FindFirstChild("HumanoidRootPart") then
-            local Animal = GetClosestAnimal()
-
-            if Animal and Animal:FindFirstChild("HumanoidRootPart") then
-                if GetMagnitude(LocalPlayer.Character.HumanoidRootPart.Position, Animal:FindFirstChild("HumanoidRootPart").Position) < 15 then
-                    HitAnimal(Animal)
-                end
-            end
-        end
-    end
     if AutoPickup then
         if LocalPlayer.Character ~= nil and LocalPlayer.Character:FindFirstChild("HumanoidRootPart") then
             local Item = GetClosestItem()
@@ -607,4 +545,4 @@ RunService.Stepped:Connect(function()
             end
         end
     end
-end)
+end)    
